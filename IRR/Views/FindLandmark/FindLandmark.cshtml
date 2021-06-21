@@ -1,0 +1,250 @@
+﻿@section uploadStyle
+{
+	<link href="@Url.Content("~/Content/upload.css")" rel="stylesheet" type="text/css" />
+}
+
+@{
+	ViewBag.Title = "FindLandmark";
+}
+
+<style>
+	.loader {
+		border: 16px solid #f3f3f3;
+		border-radius: 50%;
+		border-top: 16px solid #3498db;
+		width: 120px;
+		height: 120px;
+		animation: spin 1s linear infinite;
+	}
+
+
+	@@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+
+
+	#box {
+		width: 150px;
+		height: 150px;
+		text-align: center;
+		position: fixed;
+		margin-left: -75px;
+		margin-top: -75px;
+		left: 50%;
+		top: 50%;
+		z-index: 20;
+		display: none;
+	}
+
+	#screen {
+		position: absolute;
+		left: 0;
+		top: 0;
+		background: #000;
+	}
+</style>
+
+<body>
+	<h1 style="text-align:center">Find Landmark</h1>
+	<hr class="featurette-divider">
+
+	<div class="container" id="uploadImage">
+		<div class="col-md-6" style="margin: 0 auto; float: none;">
+			<div class="form-group">
+				<label>Upload Image</label>
+				<div class="input-group">
+					<span class="input-group-btn">
+						<span class="btn btn-default btn-file">
+							Browse… <input type="file" id="imgInp">
+						</span>
+					</span>
+					<input type="text" class="form-control" readonly>
+					<button type="button" id="findLandmarkBtn" class="btn btn-success" onclick="retrieveLandmark();" disabled>Find Landmark</button>
+				</div>
+				<hr class="featurette-divider">
+				<img id='img-upload' />
+			</div>
+		</div>
+	</div>
+
+	<div class="container marketing" id="retrievedLandmarks">
+		<hr class="featurette-divider">
+	</div>
+	<div id="box">
+		<div class="loader" id="loader"></div>
+	</div>
+	<div id="screen"></div>
+</body>
+<script src="~/Scripts/jquery-3.1.1.min.js"></script>
+
+<script>
+
+	var image;
+
+	var leftText = `<div class="row featurette">
+				<div class="col-md-7">
+					<h2 class="featurette-heading">$LANDMARK_NAME$.<span class="text-muted"> $LANDMARK_LOCATION$.</span></h2>
+					<p class="lead">$LANDMARK_INFORMATION$</p>
+				</div>
+				<div class="col-md-5">
+					<img onclick="featureMatchPictures('$FEATURE_MATCH$');" class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="500x500" src="data:image;base64,$LANDMARK_IMG$" data-holder-rendered="true">
+				</div>
+			</div>
+			<hr class="featurette-divider">`;
+
+	var rightText = `<div class="row featurette">
+				<div class="col-md-5">
+					<img onclick="featureMatchPictures('$FEATURE_MATCH$');" class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="500x500" src="data:image;base64,$LANDMARK_IMG$" data-holder-rendered="true">
+				</div>
+				<div class="col-md-7">
+					<h2 class="featurette-heading">$LANDMARK_NAME$.<span class="text-muted"> $LANDMARK_LOCATION$.</span></h2>
+					<p class="lead">$LANDMARK_INFORMATION$</p>
+				</div>
+			</div>
+			<hr class="featurette-divider">`;
+
+	var isLandmark = `<h1 style="text-align:center">You are most probably near </h1> <hr class="featurette-divider">`;
+
+	function showLoader() {
+		$('#screen').css({ 'display': 'block', opacity: 0.7, 'width': $(document).width(), 'height': $(document).height() });
+		$('#box').css({ 'display': 'block', opacity: 0.7, });
+	}
+
+	function hideLoader() {
+		$('#screen').css({ "display": "none" });
+		$('#box').css({ "display": "none" });
+	}
+
+	function featureMatchPictures(landmarkId) {
+		console.log(image);
+		var fmURL = "https://localhost:44333/api/Dataset/FeatureMatch";
+
+		showLoader();
+
+		var form_data = new FormData();
+		form_data.append('file', image);
+		form_data.append('landmarkId', landmarkId);
+
+		$.ajax({
+			async: true,
+			method: "post",
+			dataType: "json",
+			cache: false,
+			contentType: false,
+			processData: false,
+			url: fmURL,
+			data: form_data,
+			success: function (data) {
+				hideLoader();
+			},
+			error: function (data) {
+				hideLoader();
+				alert("Something went terribly wrong. :(");
+
+			}
+		});
+	}
+
+	function retrieveLandmark() {
+				console.log(image);
+
+		showLoader();
+
+		var wsURL = "https://localhost:44333/api/FindLandmark/FindLandmark";
+
+		var form_data = new FormData();
+		form_data.append('file', image);
+
+		$.ajax({
+			async: true,
+			method: "post",
+			dataType: "json",
+			cache: false,
+			contentType: false,
+			processData: false,
+			url: wsURL,
+			data: form_data,
+			success: function (data) {
+
+				$("#retrievedLandmarks").empty();
+				$("#retrievedLandmarks").append(isLandmark);
+
+				$.each(data, function (index, object) {
+					var replacedLeftText = leftText;
+					var replacedRightText = rightText;
+
+					if (index % 2 === 0) {
+						replacedLeftText = replacedLeftText.replace("$LANDMARK_NAME$", object.Name);
+						replacedLeftText = replacedLeftText.replace("$LANDMARK_LOCATION$", object.Location);
+						replacedLeftText = replacedLeftText.replace("$LANDMARK_INFORMATION$", object.Information);
+						replacedLeftText = replacedLeftText.replace("$LANDMARK_IMG$", object.LandmarkImage);
+						replacedLeftText = replacedLeftText.replace("$FEATURE_MATCH$", object.LandmarkId);
+						$("#retrievedLandmarks").append(replacedLeftText);
+					}
+					else {
+						replacedRightText = replacedRightText.replace("$LANDMARK_NAME$", object.Name);
+						replacedRightText = replacedRightText.replace("$LANDMARK_LOCATION$", object.Location);
+						replacedRightText = replacedRightText.replace("$LANDMARK_INFORMATION$", object.Information);
+						replacedRightText = replacedRightText.replace("$LANDMARK_IMG$", object.LandmarkImage);
+						replacedRightText = replacedRightText.replace("$FEATURE_MATCH$", object.LandmarkId);
+
+						$("#retrievedLandmarks").append(replacedRightText);
+					}
+				});
+
+				hideLoader();
+
+			},
+			error: function (data) {
+				hideLoader();
+				alert("Could not find any landmarks. Please try again from a different angle.");
+			}
+		});
+	}
+
+	$(document).ready(function () {
+		$(document).on('change', '.btn-file :file', function () {
+			var input = $(this),
+				label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+			input.trigger('fileselect', [label]);
+		});
+
+		$('.btn-file :file').on('fileselect', function (event, label) {
+
+			var input = $(this).parents('.input-group').find(':text'),
+				log = label;
+
+			if (input.length) {
+				input.val(log);
+			} else {
+				if (log) alert(log);
+			}
+
+		});
+
+		function readURL(input) {
+			if (input.files && input.files[0]) {
+				var reader = new FileReader();
+
+				reader.onload = function (e) {
+					$('#img-upload').attr('src', e.target.result);
+					$('#findLandmarkBtn').prop('disabled', false);
+				}
+
+				reader.readAsDataURL(input.files[0]);
+				image = input.files[0];
+			}
+		}
+
+		$("#imgInp").change(function () {
+			readURL(this);
+		});
+	});
+
+</script>

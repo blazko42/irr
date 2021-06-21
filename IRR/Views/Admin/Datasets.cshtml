@@ -1,0 +1,224 @@
+﻿
+@{
+	ViewBag.Title = "Datasets";
+}
+
+<style>
+	.loader {
+		border: 16px solid #f3f3f3;
+		border-radius: 50%;
+		border-top: 16px solid #3498db;
+		width: 120px;
+		height: 120px;
+		animation: spin 1s linear infinite;
+	}
+
+
+	@@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+
+
+	#box {
+		width: 150px;
+		height: 150px;
+		text-align: center;
+		position: fixed;
+		margin-left: -75px;
+		margin-top: -75px;
+		left: 50%;
+		top: 50%;
+		z-index: 20;
+		display: none;
+	}
+
+	#screen {
+		position: absolute;
+		left: 0;
+		top: 0;
+		background: #000;
+	}
+</style>
+
+<body>
+	<h2>Datasets info & operations</h2>
+
+	<div class="form-horizontal">
+		<h3>Feature extractor status:</h3>
+
+		<div class="form-group">
+			<ul>
+				@foreach (IRR.Models.FeatureExtractor featureExtractor in IRR.Models.FeatureExtractor.GetFeatureExtractors())
+				{
+					<li style="font-size:20px;">
+						@(featureExtractor.FeatureExtractorName) is @{switch (featureExtractor.IsActive)
+							{
+								case true:
+									<text> <font color="red">active</font>. </text>;
+									break;
+								case false:
+									<text>not active. </text>;
+									break;
+							}
+						}
+					</li>
+				}
+			</ul>
+		</div>
+
+		<div class="form-group">
+			<div class="col-md-10 form-inline">
+				<select class="form-control" id="featureExtractor" name="featureExtractor">
+					@foreach (IRR.Models.FeatureExtractor featureExtractor in IRR.Models.FeatureExtractor.GetFeatureExtractors())
+					{
+						<option value="@featureExtractor.FEId" @(featureExtractor.IsActive == true ? "selected" : "")> @featureExtractor.Code</option>
+					}
+				</select>
+				<input type="button" value="Set active" class="btn btn-warning" onclick="window.location.href='/Admin/SetActiveFeatureExtractor?feId=' + $('#featureExtractor').val();" />
+			</div>
+		</div>
+
+		<h3>Dataset status:</h3>
+
+		<div class="form-group">
+			<ul>
+				@foreach (IRR.Models.FeatureExtractor featureExtractor in IRR.Models.FeatureExtractor.GetFeatureExtractors())
+				{
+					<li style="font-size:20px;">
+						@(featureExtractor.FeatureExtractorName) is @{switch (featureExtractor.IsComputed)
+							{
+								case true:
+									<text> <font color="red">computed</font>. </text>;
+									break;
+								case false:
+									<text>not computed. </text>;
+									break;
+							}
+						}
+					</li>
+				}
+			</ul>
+		</div>
+
+		<h3>Dataset commands:</h3>
+
+		<div class="form-group">
+			<div class="col-md-10 form-inline">
+				<input type="button" value="Compute Active Dataset" class="btn btn-success" onclick="computeDatasetForActiveFeatureExtractor();" />
+				<input type="button" value="Clear Active Dataset" class="btn btn-danger" onclick="clearDatasetForActiveFeatureExtractor();" />
+			</div>
+		</div>
+	</div>
+
+	<p>
+		@Html.ActionLink("Back", "Index")
+	</p>
+
+	<div id="box">
+		<div class="loader" id="loader"></div>
+	</div>
+	<div id="screen"></div>
+
+</body>
+<script src="~/Scripts/jquery-3.1.1.min.js"></script>
+
+<script>
+
+	function showLoader() {
+		$('#screen').css({ 'display': 'block', opacity: 0.7, 'width': $(document).width(), 'height': $(document).height() });
+		$('#box').css({ 'display': 'block', opacity: 0.7, });
+	}
+
+	function hideLoader() {
+		$('#screen').css({ "display": "none" });
+		$('#box').css({ "display": "none" });
+	}
+
+	function computeDatasetForActiveFeatureExtractor() {
+
+		var wsURL = "https://localhost:44333/api/Dataset/ComputeActiveFeatureExtractor";
+
+		if (confirm("Really compute dataset? This may take some time depending on the size of the dataset.")) {
+
+			showLoader();
+			$.ajax({
+				async: true,
+				method: "get",
+				dataType: "json",
+				url: wsURL,
+				success: function (data) {
+					hideLoader();
+
+					window.location.href = window.location.href;
+				},
+				error: function (data) {
+					hideLoader();
+
+					let displayError;
+					if (data.responseJSON) {
+						if (data.responseJSON.ExceptionMessage)
+							displayError = data.responseJSON.ExceptionMessage;
+						else if (data.responseJSON.Message)
+							displayError = data.responseJSON.Message;
+						else
+							displayError = data.responseJSON;
+					}
+					else if (data.Message) {
+						displayError = data.Message;
+					}
+					else
+						displayError = data;
+
+					alert(displayError);
+				}
+			});
+
+		}
+	}
+
+	function clearDatasetForActiveFeatureExtractor() {
+
+		var wsURL = "https://localhost:44333/api/Dataset/ClearDatasetForActiveFeatureExtractor";
+
+		if (confirm("This will clear the dataset for the active feature extractor. Are you sure?")) {
+			showLoader();
+
+			$.ajax({
+				async: true,
+				method: "get",
+				dataType: "json",
+				url: wsURL,
+				success: function (data) {
+					showLoader();
+					window.location.href = window.location.href;
+				},
+				error: function (data) {
+					hideLoader();
+					let displayError;
+					if (data.responseJSON) {
+						if (data.responseJSON.ExceptionMessage)
+							displayError = data.responseJSON.ExceptionMessage;
+						else if (data.responseJSON.Message)
+							displayError = data.responseJSON.Message;
+						else
+							displayError = data.responseJSON;
+					}
+					else if (data.Message) {
+						displayError = data.Message;
+					}
+					else
+						displayError = data;
+
+					alert(displayError);
+				}
+			});
+		}
+	}
+
+</script>

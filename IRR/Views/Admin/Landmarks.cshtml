@@ -1,0 +1,71 @@
+﻿@model IEnumerable<IRR.Models.Landmark>
+
+
+@{
+    ViewBag.Title = "Landmarks";
+}
+
+<h2>Landmarks</h2>
+
+<p>
+    @Html.ActionLink("New Landmark", "NewLandmark") | 
+    @Html.ActionLink("Back", "Index")
+</p>
+
+<table class="table" style="width: 100%; margin: 20px auto; table-layout: auto; text-align:center;">
+	<tr>
+		<th style="white-space:nowrap; text-align:center; width:auto;">
+			Landmark Id
+		</th>
+		<th style="white-space:nowrap; text-align:center; width:auto;">
+			Landmark URL
+		</th>
+		<th style="white-space:nowrap; text-align:center; width:auto;">
+			Landmark Image
+		</th>
+		<th style="white-space:nowrap; text-align:center; width:auto;">
+			Name
+		</th>
+		<th style="white-space:nowrap; text-align:center; width:auto;">
+			Location
+		</th>
+		@*<th style="white-space:nowrap; text-align:center; width:auto;">
+			Information
+		</th>*@
+		<th style="white-space:nowrap; text-align:center; width:auto;">
+			Date
+		</th>
+		<th></th>
+	</tr>
+    @foreach (IRR.Models.Landmark item in Model)
+    {
+        <tr>
+            <td>
+                @item.LandmarkId
+            </td>
+            <td>
+                @item.LandmarkURL
+            </td>
+			<td>
+				<img id="landmarkImage" src="data:image;base64,@System.Convert.ToBase64String(item.LandmarkImage)" width="250" height="250" />
+			</td>
+            <td>
+                @item.Name
+            </td>
+			<td>
+				@item.Location
+
+			</td>
+            @*<td>
+                @item.Information
+            </td>*@
+            <td style="white-space:nowrap; text-align:center; width:auto;">
+                @item.Date.ToString("dd/MM/yyyy")
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "NewLandmark", new { landmarkId = item.LandmarkId }) |
+                @Html.ActionLink("Delete", "DeleteLandmark", new { ldId = item.LDId })
+            </td>
+        </tr>
+    }
+</table>

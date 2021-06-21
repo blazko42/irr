@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="IRR_WS.Controllers.api.DatasetController">
+    <Position X="0.5" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAIAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\api\DatasetController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IRR_WS.Controllers.api.FindLandmarkController">
+    <Position X="0.5" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\api\FindLandmarkController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IRR_WS.Models.Descriptor">
+    <Position X="3.5" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAIAAgAAAAQAAAAAAAAABAAAAAAAAAAAAAAAAIgAAAA=</HashCode>
+      <FileName>Models\Descriptor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IRR_WS.Models.FeatureExtractor">
+    <Position X="0.5" Y="3.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAEAAgAIAAAAAAACAAAAAAAAAEAAA=</HashCode>
+      <FileName>Models\FeatureExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IRR_WS.Models.IndexImage">
+    <Position X="9.25" Y="0.5" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="IRR_WS.Models.IndexImage.ImageIndex">
+        <TypeIdentifier>
+          <NewMemberFileName>Models\IndexImage.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ABAAAAAgAAAAAAAAAAAAAAABAAAAAAAAAAEAAEAAEAA=</HashCode>
+      <FileName>Models\IndexImage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IRR_WS.Models.Landmark">
+    <Position X="6.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEgBAAAIAIAAAAAIAAAQAAAggAAAVAGAAAAAAQAA=</HashCode>
+      <FileName>Models\Landmark.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IRR_WS.Models.Searcher">
+    <Position X="3.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABBAgAAgAAAAIAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Models\Searcher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

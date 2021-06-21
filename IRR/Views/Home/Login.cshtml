@@ -1,0 +1,29 @@
+﻿@model IRR.Models.User
+
+@section loginStyle
+{
+    <link href="@Url.Content("~/Content/login.css")" rel="stylesheet" type="text/css" />
+}
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="wrap">
+                <p class="form-title" style="color: black">
+                    Sign In to IRR
+                </p>
+                <form class="login" method="post" action="@Url.Action("Login", "Home")">
+                    <input type="text" name="UserName" value="@(Model.UserName)" placeholder="Username" />
+                    <input type="password" name="Password" value="@(Model.Password)" placeholder="Password" />
+                    <input type="submit" value="Sign In" class="btn btn-warning btn-sm" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

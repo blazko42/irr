@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewBag.Title - IRR</title>
+	<link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+	<link href="~/Content/tether.min.css" rel="stylesheet" type="text/css" />
+	<link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+	<title>
+		@ViewBag.Login
+	</title>
+	@RenderSection("loginStyle", false)
+	@RenderSection("uploadStyle", false)
+
+</head>
+
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand">IRR</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li>
+					@Html.ActionLink("Home", "LandingPage", "Home")
+				</li>
+				<li>
+					@if (IRR.Models.User.GetSessionUser() != null)
+					{
+						@Html.ActionLink("Find Landmark", "FindLandmark", "FindLandmark")
+					}
+				</li>
+				<li>
+					@if (IRR.Models.User.GetSessionUser() != null && IRR.Models.User.GetSessionUser().IsAdmin())
+					{
+						@Html.ActionLink("Admin", "Index", "Admin")
+					}
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				@if (IRR.Models.User.GetSessionUser() != null)
+				{
+					<li><a href="/Home/LandingPage"><span class="glyphicon glyphicon-user"></span> @IRR.Models.User.GetSessionUser().UserName</a></li>
+					<li><a href="/Home/Logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+				}
+				else
+				{
+					<li><a href="/Home/CreateAccount"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+					<li><a href="/Home/Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+				}
+			</ul>
+		</div>
+	</nav>
+	<div class="container body-content">
+		@RenderBody()
+		<footer>
+			<p>&copy; @DateTime.Now.Year - IRR - Image Recognition & Retrieval.</p>
+		</footer>
+	</div>
+
+	<script src="~/Scripts/jquery-3.1.1.min.js"></script>
+	<script src="~/Scripts/tether.min.js"></script>
+	<script src="~/Scripts/bootstrap.min.js"></script>
+</body>
+</html>
